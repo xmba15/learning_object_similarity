@@ -10,23 +10,11 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader,Dataset
 from PIL import Image
 
-directory_root = os.path.dirname(os.path.realpath(__file__)) + "/../"
-data_path = directory_root + "/data/raw_training_data/"
-
-normalize = transforms.Normalize(
-   mean=[0.485, 0.456, 0.406],
-   std=[0.229, 0.224, 0.225]
-)
-
-_preprocess = transforms.Compose([
-    transforms.Resize((100, 100), 2),
-    transforms.ToTensor(),
-    normalize
-])
+from config import Config
 
 class SiameseNetworkDataset(Dataset):
 
-    def __init__(self, data_path, preprocess = _preprocess):
+    def __init__(self, data_path, preprocess = Config.transforms):
 
         self.data_path = data_path
         self.preprocess = preprocess
@@ -90,7 +78,7 @@ class SiameseNetworkDataset(Dataset):
         
 if __name__=="__main__":
 
-    data_set = SiameseNetworkDataset(data_path)
+    data_set = SiameseNetworkDataset(Config.training_dir)
     print data_set.num_categories
     print data_set.image_lists[0][0]
     import cv2

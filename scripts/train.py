@@ -47,5 +47,5 @@ if __name__=="__main__":
                 counter.append(iteration_number)
                 loss_history.append(loss_contrastive.data[0])
 
-    torch.save(net.state_dict(), model_path + "/siamese.pth")
+    torch.save(net.state_dict(), Config.model_dir + "/siamese.pth")
     # show_plot(counter,loss_history)

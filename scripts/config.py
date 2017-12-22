@@ -7,6 +7,19 @@ data_path = directory_root + "/data/raw_training_data/"
 test_data_path = directory_root + "/data/raw_testing_data/"
 model_path = directory_root + "/models/"
 
+import torchvision.transforms as transforms
+
+normalize = transforms.Normalize(
+   mean=[0.485, 0.456, 0.406],
+   std=[0.229, 0.224, 0.225]
+)
+
+_preprocess = transforms.Compose([
+    transforms.Resize((100, 100), 2),
+    transforms.ToTensor(),
+    # normalize
+])
+
 class Config():
 
     training_dir = data_path
@@ -14,3 +27,4 @@ class Config():
     model_dir = model_path
     train_batch_size = 500
     train_number_epochs = 10
+    transforms = _preprocess

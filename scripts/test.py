@@ -12,9 +12,21 @@ import torch.nn.functional as F
 import torchvision
 from utils import imshow
 
+normalize = transforms.Normalize(
+   mean=[0.485, 0.456, 0.406],
+   std=[0.229, 0.224, 0.225]
+)
+
+_preprocess = transforms.Compose([
+    transforms.Resize((100, 100), 2),
+    transforms.ToTensor(),
+    normalize
+])
+
+
 if __name__=="__main__":
 
-    test_siamese_dataset = SiameseNetworkDataset(data_path = Config.testing_dir)
+    test_siamese_dataset = SiameseNetworkDataset(data_path = Config.testing_dir, preprocess = _preprocess)
     test_dataloader = DataLoader(test_siamese_dataset,
                                  num_workers = 6,
                                  batch_size = 1,

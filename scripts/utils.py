@@ -28,8 +28,10 @@ if __name__=="__main__":
 
     directory_root = os.path.dirname(os.path.realpath(__file__)) + "/../"
     _data_path = directory_root + "/data/raw_training_data/"
-
-    siamese_dataset = SiameseNetworkDataset(data_path = _data_path)
+    test_data_path = directory_root + "/data/raw_testing_data/"
+    
+    # siamese_dataset = SiameseNetworkDataset(data_path = _data_path)
+    siamese_dataset = SiameseNetworkDataset(data_path = test_data_path)
     
     vis_dataloader = DataLoader(siamese_dataset,
                         shuffle = True,

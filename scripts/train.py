@@ -9,18 +9,8 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader,Dataset
 from torch import optim
 
+from config import Config
 from utils import imshow, show_plot
-
-directory_root = os.path.dirname(os.path.realpath(__file__)) + "/../"
-data_path = directory_root + "/data/raw_training_data/"
-model_path = directory_root + "/models/"
-
-class Config():
-
-    training_dir = data_path
-    testing_dir = None
-    train_batch_size = 500
-    train_number_epochs = 10
 
 if __name__=="__main__":
 

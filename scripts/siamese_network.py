@@ -4,6 +4,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torchvision
 
 class SiameseNetwork(nn.Module):
 
@@ -40,11 +41,14 @@ class SiameseNetwork(nn.Module):
 
             nn.Linear(500, 5))
 
+        self.resnet = nn.Sequential(torchvision.models.resnet50(pretrained=True))
+
     def forward_once(self, x):
 
-        output = self.cnn1(x)
-        output = output.view(output.size()[0], -1)
-        output = self.fc1(output)
+        # output = self.cnn1(x)
+        # output = output.view(output.size()[0], -1)
+        # output = self.fc1(output)
+        output = self.resnet(x)
         return output
 
     def forward(self, input1, input2):

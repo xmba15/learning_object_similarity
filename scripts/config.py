@@ -15,7 +15,7 @@ normalize = transforms.Normalize(
 )
 
 _preprocess = transforms.Compose([
-    transforms.Resize((100, 100), 2),
+    transforms.Resize((224, 224), 2),
     transforms.RandomHorizontalFlip(),
     transforms.RandomVerticalFlip(),
     transforms.ToTensor(),
@@ -27,6 +27,6 @@ class Config():
     training_dir = data_path
     testing_dir = test_data_path
     model_dir = model_path
-    train_batch_size = 500
-    train_number_epochs = 10
+    train_batch_size = 50
+    train_number_epochs = 100
     transforms = _preprocess

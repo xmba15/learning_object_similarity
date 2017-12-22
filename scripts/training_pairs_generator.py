@@ -66,10 +66,10 @@ class SiameseNetworkDataset(Dataset):
         first_categor_num = np.random.choice(np.arange(self.num_categories))
 
         if same_class:
-            label = 1
+            label = 0
             img_path1, img_path2 = self.get_random_two_images(self.image_lists[first_categor_num], self.image_lists[first_categor_num])
         else:
-            label = 0
+            label = 1
             negative_categor_list = np.delete(np.arange(self.num_categories), first_categor_num)
             second_categor_num = np.random.choice(negative_categor_list)
             img_path1, img_path2 = self.get_random_two_images(self.image_lists[first_categor_num], self.image_lists[second_categor_num])

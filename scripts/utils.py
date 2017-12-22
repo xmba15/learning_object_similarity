@@ -32,12 +32,13 @@ if __name__=="__main__":
     siamese_dataset = SiameseNetworkDataset(data_path = _data_path)
     
     vis_dataloader = DataLoader(siamese_dataset,
-                        shuffle=True,
-                        num_workers=8,
-                        batch_size=8)
+                        shuffle = True,
+                        num_workers = 8,
+                        batch_size = 8)
     dataiter = iter(vis_dataloader)
     example_batch = next(dataiter)
-    concatenated = torch.cat((example_batch[0],example_batch[1]),0)
+    concatenated = torch.cat((example_batch[0], example_batch[1]), 0)
 
+    print example_batch[2]    
     imshow(torchvision.utils.make_grid(concatenated), None)
-    print example_batch[2]
+

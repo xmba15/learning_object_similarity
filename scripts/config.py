@@ -16,8 +16,10 @@ normalize = transforms.Normalize(
 
 _preprocess = transforms.Compose([
     transforms.Resize((100, 100), 2),
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomVerticalFlip(),
     transforms.ToTensor(),
-    # normalize
+    normalize
 ])
 
 class Config():

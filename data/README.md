@@ -2,5 +2,4 @@
 https://rgbd-dataset.cs.washington.edu/
 
 # Only used a part of the dataset which can be downloaded here:
-https://drive.google.com/file/d/1prmuIa-6aFPL4RMJUDl8nCnXCjmnkBPY/view?usp=sharing
-(shortened url: goo.gl/7QCG5p)
+https://drive.google.com/drive/folders/13yjM9aPnKN-fyXs4vt235-b2OQ77Qy4C?usp=sharing

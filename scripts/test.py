@@ -19,7 +19,7 @@ normalize = transforms.Normalize(
 )
 
 _preprocess = transforms.Compose([
-    transforms.Resize((100, 100), 2),
+    transforms.Resize((224, 224), 2),
     transforms.ToTensor(),
     normalize
 ])
@@ -37,7 +37,7 @@ if __name__=="__main__":
     x0,_,_ = next(dataiter)
 
     net = SiameseNetwork().cuda()
-    net.load_state_dict(torch.load(Config.model_dir + "/siamese.pth"))
+    net.load_state_dict(torch.load(Config.model_dir + "/siamese_98.pth"))
 
     for i in range(10):
 

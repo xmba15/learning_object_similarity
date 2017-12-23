@@ -74,7 +74,7 @@ class SiameseNetworkDataset(Dataset):
 
     def __len__(self):
 
-        return self.num_img
+        return self.num_img * 2
         
 if __name__=="__main__":
 

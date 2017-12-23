@@ -12,6 +12,8 @@ from torch import optim
 from config import Config
 from utils import imshow, show_plot
 
+import matplotlib.pyplot as plt
+
 if __name__=="__main__":
 
     cnn_model = "densenet"
@@ -50,4 +52,8 @@ if __name__=="__main__":
                 loss_history.append(loss_contrastive.data[0])
         
         torch.save(net.state_dict(), Config.model_dir + cnn_model + "_siamese_" + str(epoch) + ".pth")
-    # show_plot(counter,loss_history)
+
+    plt.plot(counter, loss_history)
+    plt.title("Loss Value Over Time for Training Siamese Dense Net for Object Similarity")
+    plt.savefig(Config.log_dir + "/loss_data.png")
+    plt.close()

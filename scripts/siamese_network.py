@@ -13,11 +13,12 @@ class SiameseNetwork(nn.Module):
         super(SiameseNetwork, self).__init__()
         
         self.pretrained = pretrained
-        self.resnet = nn.Sequential(torchvision.models.resnet50(pretrained = self.pretrained))
+        # self.resnet = nn.Sequential(torchvision.models.resnet50(pretrained = self.pretrained))
+        self.cnn_model = nn.Sequential(torchvision.models.densenet201(pretrained = self.pretrained))
 
     def forward_once(self, x):
 
-        output = self.resnet(x)
+        output = self.cnn_model(x)
         return output
 
     def forward(self, input1, input2):

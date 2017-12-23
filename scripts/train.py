@@ -14,13 +14,14 @@ from utils import imshow, show_plot
 
 if __name__=="__main__":
 
+    cnn_model = "densenet"
     siamese_dataset = SiameseNetworkDataset(data_path = Config.training_dir)
     train_dataloader = DataLoader(siamese_dataset,
                         shuffle = True,
                         num_workers=8,
                         batch_size = Config.train_batch_size)
     
-    net = SiameseNetwork().cuda()
+    net = SiameseNetwork(pretrained = True).cuda()
     criterion = ContrastiveLoss()
     optimizer = optim.Adam(net.parameters(),lr = 0.0005 )
 
@@ -41,11 +42,12 @@ if __name__=="__main__":
             loss_contrastive.backward()
             optimizer.step()
 
-            if i %10 == 0 :
+            if i % 10 == 0 :
+
                 print("Epoch number {}\n Current loss {}\n".format(epoch,loss_contrastive.data[0]))
                 iteration_number +=10
                 counter.append(iteration_number)
                 loss_history.append(loss_contrastive.data[0])
-
-    torch.save(net.state_dict(), Config.model_dir + "/siamese.pth")
+        
+        torch.save(net.state_dict(), Config.model_dir + cnn_model + "_siamese_" + str(epoch) + ".pth")
     # show_plot(counter,loss_history)

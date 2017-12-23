@@ -8,46 +8,15 @@ import torchvision
 
 class SiameseNetwork(nn.Module):
 
-    def __init__(self):
+    def __init__(self, pretrained = False):
 
         super(SiameseNetwork, self).__init__()
-
-        self.cnn1 = nn.Sequential(
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(3, 4, kernel_size=3),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(4),
-            nn.Dropout2d(p=.2),
-            
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(4, 8, kernel_size=3),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(8),
-            nn.Dropout2d(p=.2),
-
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(8, 8, kernel_size=3),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(8),
-            nn.Dropout2d(p=.2),
-        )
-
-        self.fc1 = nn.Sequential(
-            nn.Linear(8*100*100, 500),
-            nn.ReLU(inplace=True),
-
-            nn.Linear(500, 500),
-            nn.ReLU(inplace=True),
-
-            nn.Linear(500, 5))
-
-        self.resnet = nn.Sequential(torchvision.models.resnet50(pretrained=True))
+        
+        self.pretrained = pretrained
+        self.resnet = nn.Sequential(torchvision.models.resnet50(pretrained = self.pretrained))
 
     def forward_once(self, x):
 
-        # output = self.cnn1(x)
-        # output = output.view(output.size()[0], -1)
-        # output = self.fc1(output)
         output = self.resnet(x)
         return output
 

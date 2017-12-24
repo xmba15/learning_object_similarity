@@ -13,6 +13,8 @@ import torchvision
 from utils import imshow
 from PIL import Image
 
+from sklearn.cluster import KMeans
+
 import torchvision.transforms as transforms
 normalize = transforms.Normalize(
    mean=[0.485, 0.456, 0.406],
@@ -25,22 +27,27 @@ _preprocess = transforms.Compose([
     normalize
 ])
 
+def load_image(img_path):
+
+    img = Image.open(img_path)
+    img = _preprocess(img)
+
+    return img.unsqueeze(0)
 
 if __name__=="__main__":
 
     net = SiameseNetwork().cuda()
-    model_name = "siamese_98.pth"
+    model_name = "densenet_siamese_42.pth"
     net.load_state_dict(torch.load(Config.model_dir + model_name))
 
-    img1 = Image.open(Config.image_dir + "/noodle.jpg")
-    img1 = _preprocess(img1)
-    img1 = img1.unsqueeze(0)
+    img1_path = Config.image_dir + "/noodle2.jpg"
+    img2_path = Config.image_dir + "/dove.jpg"
+
+    img1 = load_image(img1_path)
+    img2 = load_image(img2_path)
     
-    img2 = Image.open(Config.image_dir + "/fries.jpg")
-    img2 = _preprocess(img2)
-    img2 = img2.unsqueeze(0)
-    
-    output1, output2 = net(Variable(img1).cuda(),Variable(img2).cuda())
+    output1, output2 = net(Variable(img1).cuda(),Variable(img2).cuda())    
     concatenated = torch.cat((img1, img2),0)    
     euclidean_distance = F.pairwise_distance(output1, output2)
+
     imshow(torchvision.utils.make_grid(concatenated),'Dissimilarity: {:.2f}'.format(euclidean_distance.cpu().data.numpy()[0][0]))

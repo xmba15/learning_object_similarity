@@ -12,7 +12,7 @@ from PIL import Image
 
 from config import Config
 
-class SiameseNetworkDataset(Dataset):
+class NetworkDataset(Dataset):
 
     def __init__(self, data_path, preprocess = Config.transforms):
 
@@ -53,24 +53,23 @@ class SiameseNetworkDataset(Dataset):
         same_class = random.randint(0, 1)
         first_categor_num = np.random.choice(np.arange(self.num_categories))
 
-        if same_class:
-            label = 0
-            img_path1, img_path2 = self.get_random_two_images(self.image_lists[first_categor_num], self.image_lists[first_categor_num])
-        else:
-            label = 1
-            negative_categor_list = np.delete(np.arange(self.num_categories), first_categor_num)
-            second_categor_num = np.random.choice(negative_categor_list)
-            img_path1, img_path2 = self.get_random_two_images(self.image_lists[first_categor_num], self.image_lists[second_categor_num])
+        a_path, p_path = self.get_random_two_images(self.image_lists[first_categor_num], self.image_lists[first_categor_num])
 
-        img1 = Image.open(img_path1)
-        img2 = Image.open(img_path2)
+        negative_categor_list = np.delete(np.arange(self.num_categories), first_categor_num)
+        second_categor_num = np.random.choice(negative_categor_list)
+        n_path = np.random.choice(self.image_lists[second_categor_num])
+
+        a = Image.open(a_path)
+        p = Image.open(p_path)
+        n = Image.open(n_path)
 
         if self.preprocess is not None:
 
-            img1 = self.preprocess(img1)
-            img2 = self.preprocess(img2)
+            a = self.preprocess(a)
+            p = self.preprocess(p)
+            n = self.preprocess(n)
 
-        return img1, img2, torch.from_numpy(np.array([label], dtype = np.float32))
+        return a, p, n
 
     def __len__(self):
 
@@ -78,7 +77,7 @@ class SiameseNetworkDataset(Dataset):
         
 if __name__=="__main__":
 
-    data_set = SiameseNetworkDataset(Config.training_dir)
+    data_set = NetworkDataset(Config.training_dir)
     print data_set.num_categories
     print data_set.image_lists[0][0]
     import cv2

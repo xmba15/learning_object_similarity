@@ -1,0 +1,3 @@
+[submodule "pytorch-LapSRN"]
+	path = pytorch-LapSRN
+	url = git@github.com:bajsk/pytorch-LapSRN.git

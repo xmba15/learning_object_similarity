@@ -7,9 +7,10 @@ import torch.nn.functional as F
 import torchvision
 
 from config import Config
+import sys
+sys.path.insert(0, Config.lapsrn_dir)
 
-lapsrn_model_path = Conifg.lapsrn_dir + "model/model_epoch_100.pth"
-lapsrn_model = torch.load(model_path)["model"]
+lapsrn_model = torch.load(Config.lapsrn_dir + "/model/model_epoch_100.pth")["model"]
 for param in lapsrn_model.parameters():
     param.requires_grad = False
 
@@ -81,3 +82,8 @@ class ContrastiveLoss(torch.nn.Module):
                                       (label) * torch.pow(torch.clamp(self.margin - euclidean_distance, min=0.0), 2))
 
         return loss_contrastive        
+
+if __name__=="__main__":
+
+    siamese_net = SiameseNetwork()
+    print siamese_net

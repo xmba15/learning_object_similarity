@@ -8,6 +8,7 @@ import torch
 from torch.autograd import Variable
 from torch.utils.data import DataLoader,Dataset
 from torch import optim
+import torch.nn as nn
 
 from config import Config
 from utils import imshow, show_plot
@@ -16,7 +17,7 @@ import matplotlib.pyplot as plt
 
 if __name__=="__main__":
 
-    cnn_model = "densenet"
+    cnn_model = "hr_resnet"
     siamese_dataset = SiameseNetworkDataset(data_path = Config.training_dir)
     train_dataloader = DataLoader(siamese_dataset,
                         shuffle = True,
@@ -24,7 +25,7 @@ if __name__=="__main__":
                         batch_size = Config.train_batch_size)
     
     net = SiameseNetwork(pretrained = True).cuda()
-    criterion = ContrastiveLoss()
+    criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(),lr = 0.0005 )
 
     counter = []
@@ -37,10 +38,12 @@ if __name__=="__main__":
             img0, img1 , label = data
             img0, img1 , label = Variable(img0).cuda(), Variable(img1).cuda() , Variable(label).cuda()
 
-            output1, output2 = net(img0, img1)
+            # output1, output2 = net(img0, img1)
+            output = net(img0, img1)
 
             optimizer.zero_grad()
-            loss_contrastive = criterion(output1,output2,label)
+            # loss_contrastive = criterion(output1,output2,label)
+            loss_contrastive = criterion(output, label)            
             loss_contrastive.backward()
             optimizer.step()
 
@@ -53,7 +56,7 @@ if __name__=="__main__":
         
         torch.save(net.state_dict(), Config.model_dir + cnn_model + "_siamese_" + str(epoch) + ".pth")
 
-    plt.plot(counter, loss_history)
-    plt.title("Loss Value Over Time for Training Siamese Dense Net for Object Similarity")
-    plt.savefig(Config.log_dir + "/loss_data.png")
-    plt.close()
+    # plt.plot(counter, loss_history)
+    # plt.title("Loss Value Over Time for Training Siamese Dense Net for Object Similarity")
+    # plt.savefig(Config.log_dir + "/loss_data.png")
+    # plt.close()

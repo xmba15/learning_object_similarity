@@ -52,7 +52,7 @@ if __name__=="__main__":
 
             if i % 10 == 0 :
 
-                print("Epoch number {}\n Current loss {}\n".format(epoch,loss_contrastive.data[0]))
+                print("Epoch number {}\n Current loss {}\n".format(epoch, _loss_.data[0]))
                 iteration_number +=10
                 counter.append(iteration_number)
                 loss_history.append(_loss.data[0])

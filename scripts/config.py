@@ -10,6 +10,7 @@ test_data_path = directory_root + "/data/raw_testing_data/"
 model_path = directory_root + "/models/"
 image_path = directory_root + "/images/"
 log_path = directory_root + "/logs/"
+lapsrn_path = directory_root + "/pytorch-LapSRN"
 
 import torchvision.transforms as transforms
 
@@ -39,6 +40,7 @@ class Config():
     model_dir = model_path
     image_dir = image_path
     log_dir = log_path
+    lapsrn_dir = lapsrn_path
     train_batch_size = 24
     train_number_epochs = 100
     transforms = _preprocess

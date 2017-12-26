@@ -3,7 +3,7 @@
 
 import os
 from training_pairs_generator import SiameseNetworkDataset
-from siamese_network import SiameseNetwork, ContrastiveLoss
+from siamese_network_hr_resnet import SiameseNetwork, ContrastiveLoss
 import torch
 from torch.autograd import Variable
 from torch.utils.data import DataLoader,Dataset
@@ -26,7 +26,7 @@ if __name__=="__main__":
     
     net = SiameseNetwork(pretrained = True).cuda()
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(net.parameters(),lr = 0.0005 )
+    optimizer = optim.Adam(filter(lambda p: p.requires_grad, net.parameters()),lr = 0.0005 )
 
     counter = []
     loss_history = [] 
@@ -37,12 +37,10 @@ if __name__=="__main__":
 
             img0, img1 , label = data
             img0, img1 , label = Variable(img0).cuda(), Variable(img1).cuda() , Variable(label).cuda()
-
-            # output1, output2 = net(img0, img1)
             output = net(img0, img1)
 
             optimizer.zero_grad()
-            # loss_contrastive = criterion(output1,output2,label)
+
             loss_contrastive = criterion(output, label)            
             loss_contrastive.backward()
             optimizer.step()

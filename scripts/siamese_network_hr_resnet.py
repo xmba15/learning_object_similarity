@@ -10,10 +10,6 @@ from config import Config
 import sys
 sys.path.insert(0, Config.lapsrn_dir)
 
-lapsrn_model = torch.load(Config.lapsrn_dir + "/model/model_epoch_100.pth")["model"]
-for param in lapsrn_model.parameters():
-    param.requires_grad = False
-
 resnet_model = torchvision.models.resnet50(pretrained = True)
 for param in resnet_model.parameters():
     param.requires_grad = False
@@ -26,8 +22,6 @@ class SiameseNetwork(nn.Module):
         
         self.embed_size = embed_size
         self.pretrained = pretrained
-        self.lapsrn_model = lapsrn_model
-        self.adaptive_avg_pool2d = nn.AdaptiveAvgPool2d((224, 224))
         modules = list(resnet_model.children())[:-1]
         self.resnet_model = nn.Sequential(*modules)
         self.linear = nn.Linear(resnet_model.fc.in_features, self.embed_size)
@@ -47,10 +41,7 @@ class SiameseNetwork(nn.Module):
         
     def forward_once(self, x):
 
-        HR_2x, HR_4x = self.lapsrn_model(x)
-        output = torch.cat((HR_4x, HR_4x, HR_4x), 1)
-        output = self.adaptive_avg_pool2d(output)
-        output = self.resnet_model(output)
+        output = self.resnet_model(x)
         output = self.bn(self.linear(output))
 
         return output

@@ -10,7 +10,7 @@ class TripletNetWork(nn.Module):
 
     def __init__(self, embedding_net):
 
-        super(TripletNet, self).__init__()
+        super(TripletNetWork, self).__init__()
         self.embedding_net = embedding_net
 
     def forward(self, a, p, n):
@@ -23,27 +23,27 @@ class TripletNetWork(nn.Module):
 
 class DBLLoss(torch.nn.Module):
 
-    def __init__(self, k = 1.0):
+    def __init__(self, margin = 1.0):
         super(DBLLoss, self).__init__()
-        self.k = k
+        self.margin = margin
 
     def forward(self, embedded_a, embedded_p, embedded_n):
         
-        ap = F.pairwise_distance(embedded_a, embedded_p)
-        an = F.pairwise_distance(embedded_a, embedded_n)
-        pn = F.pairwise_distance(embedded_p, embedded_n)
-        an = torch.min(an, pn)
+        # ap = F.pairwise_distance(embedded_a, embedded_p)
+        # an = F.pairwise_distance(embedded_a, embedded_n)
+        # pn = F.pairwise_distance(embedded_p, embedded_n)
+        # an = torch.min(an, pn)
 
-        ap = ap.mul(k)
-        an = an.mul(k)
+        # ap = ap.mul(self.k)
+        # an = an.mul(self.k)
         
-        p = 1 / (1.0 +  torch.exp(ap - an))
-        loss = - torch.log(p)
+        # p = 1 / (1.0 +  torch.exp(ap - an))
+        # loss = - torch.log(p)
 
-        if (loss > 10e10):
-            loss = ap - an
+        # if torch.gt(loss, 10e10):
+        #     loss = ap - an
 
-        return loss
+        return F.triplet_margin_loss(embedded_a, embedded_p, embedded_n, margin = self.margin, p=2, eps=1e-6, swap = True)
         
 class ContrastiveLoss(torch.nn.Module):
 

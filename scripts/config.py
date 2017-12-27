@@ -39,6 +39,6 @@ class Config():
     model_dir = model_path
     image_dir = image_path
     log_dir = log_path
-    train_batch_size = 64
+    train_batch_size = 32
     train_number_epochs = 100
     transforms = _preprocess

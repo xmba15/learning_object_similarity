@@ -10,7 +10,7 @@ class ResnetBased(nn.Module):
     
     def __init__(self, feature_size = 64, im_size = 224, normalize = False):
 
-        super(ResNetBased, self).__init__()
+        super(ResnetBased, self).__init__()
         self.normalize = normalize
         self.im_size = 224
         self.feature_size = feature_size
@@ -22,6 +22,7 @@ class ResnetBased(nn.Module):
     def forward(self, x):
         x = self.resnet(x)
         if self.normalize:
-            return x/torch.norm(x,2,1).repeat(1, self.feature_size)
+            # return x/torch.norm(x,2,1).repeat(1, self.feature_size)
+            return F.normalize(x, p = 2, dim = 1)
         else:
             return x

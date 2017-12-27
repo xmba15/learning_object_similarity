@@ -3,7 +3,7 @@
 
 import os
 from training_pairs_generator import NetworkDataset
-from triplet_network import TripletNetwork, DBLLoss
+from triplet_network import TripletNetWork, DBLLoss
 import torch
 from torch.autograd import Variable
 from torch.utils.data import DataLoader,Dataset
@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 if __name__=="__main__":
 
-    cnn_model = "resnet"
+    cnn_model = "resnet_triplet"
     _dataset = NetworkDataset(data_path = Config.training_dir)
     train_dataloader = DataLoader(_dataset,
                         shuffle = True,
@@ -26,12 +26,12 @@ if __name__=="__main__":
                         batch_size = Config.train_batch_size)
 
     Net = model_net.ResnetBased
-    model = Net()
-    tnet = TripletNetwork(model).cuda()
+    model = Net(normalize = True)
+    tnet = TripletNetWork(model).cuda()
     model.cuda()
     
     criterion = DBLLoss()
-    optimizer = optim.Adam(net.parameters(),lr = 0.0005 )
+    optimizer = optim.Adam(tnet.parameters(),lr = 0.0005 )
 
     counter = []
     loss_history = [] 
@@ -52,12 +52,12 @@ if __name__=="__main__":
 
             if i % 10 == 0 :
 
-                print("Epoch number {}\n Current loss {}\n".format(epoch, _loss_.data[0]))
+                print("Epoch number {}\n Current loss {}\n".format(epoch, _loss.data[0]))
                 iteration_number +=10
                 counter.append(iteration_number)
                 loss_history.append(_loss.data[0])
         
-        torch.save(net.state_dict(), Config.model_dir + cnn_model + "_triplet_" + str(epoch) + ".pth")
+        torch.save(tnet.state_dict(), Config.model_dir + cnn_model + "_triplet_" + str(epoch) + ".pth")
 
     # plt.plot(counter, loss_history)
     # plt.title("Loss Value Over Time for Training Siamese Dense Net for Object Similarity")

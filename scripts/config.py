@@ -21,15 +21,20 @@ Normalize = transforms.Normalize(
 RandomColorJitter = transforms.Lambda(
 
     lambda x: transforms.ColorJitter(brightness = 0.1, contrast = 0.1, hue = 0.01)(x) if random.random() < 0.5 else x)
-    
+
+RandomZoom = transforms.Lambda(
+
+    lambda x: transforms.Resize((224, 224), 2)(transforms.CenterCrop((220, 220))(x)) if random.random() < 0.5 else x)
+
 _preprocess = transforms.Compose([
     transforms.Resize((224, 224), 2),
+    RandomZoom,
     transforms.RandomHorizontalFlip(),
     transforms.RandomVerticalFlip(),
-    transforms.RandomRotation(degrees = 5),
+    transforms.RandomRotation(degrees = 10),
     RandomColorJitter,    
     transforms.ToTensor(),
-    Normalize
+    # Normalize
 ])
 
 class Config():

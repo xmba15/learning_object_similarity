@@ -43,7 +43,7 @@ class DBLLoss(torch.nn.Module):
         # if torch.gt(loss, 10e10):
         #     loss = ap - an
 
-        return F.triplet_margin_loss(embedded_a, embedded_p, embedded_n, margin = self.margin, p=2, eps=1e-6, swap = True)
+        return F.triplet_margin_loss(embedded_a, embedded_p, embedded_n, margin = self.margin, p = 2, eps = 1e-6, swap = True)
         
 class ContrastiveLoss(torch.nn.Module):
 

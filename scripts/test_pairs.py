@@ -3,8 +3,8 @@
 
 import os
 from config import Config
-from training_pairs_generator import SiameseNetworkDataset
-from siamese_network_old import SiameseNetwork
+from training_pairs_generator import NetworkDataset
+from triplet_network import TripletNetWork
 import torch
 from torch.autograd import Variable
 from torch.utils.data import DataLoader, Dataset
@@ -13,10 +13,13 @@ import torchvision
 from utils import imshow
 from PIL import Image
 
-from sklearn.cluster import KMeans
-
 import cv2
 import numpy as np
+
+import model_net
+
+from config import Config
+from utils import imshow, show_plot
 
 import torchvision.transforms as transforms
 normalize = transforms.Normalize(
@@ -39,36 +42,42 @@ def load_image(img_path):
 
 if __name__=="__main__":
 
-    net = SiameseNetwork().cuda()
-    model_name = "siamese_98.pth"
-    net.load_state_dict(torch.load(Config.model_dir + model_name))
-
-    img1_path = Config.image_dir + "/output3.jpg"
-    img2_path = Config.image_dir + "/output2.jpg"
-
+    
+    Net = model_net.ResnetBased
+    model = Net(normalize = True)
+    tnet = TripletNetWork(model).cuda()
+    tnet.load_state_dict(torch.load(Config.model_dir + "/resnet_triplet_triplet_2.pth"))
+    
+    
+    img1_path = Config.image_dir + "/output2.jpg"
+    img2_path = Config.image_dir + "/output1.jpg"
+    img3_path = Config.image_dir + "/output4.jpg"    
+    
     img1 = load_image(img1_path)
     img2 = load_image(img2_path)
+    img3 = load_image(img3_path)
     
-    output1, output2 = net(Variable(img1).cuda(),Variable(img2).cuda())
-    _output1 = output1.cpu().data.numpy()[0]
-    _output2 = output2.cpu().data.numpy()[0]
-    _output1 = _output1.reshape((1, 1000))
-    _output2 = _output2.reshape((1, 1000))
-    _output1 = np.array(_output1)
-    _output1 /= _output1.max()
-    _output2 = np.array(_output2)
-    _output2 /= _output2.max()
+    output1, output2, output3 = tnet(Variable(img1).cuda(), Variable(img2).cuda(), Variable(img3).cuda())
+
+    # _output1 = output1.cpu().data.numpy()[0]
+    # _output2 = output2.cpu().data.numpy()[0]
+    # _output1 = _output1.reshape((1, 1000))
+    # _output2 = _output2.reshape((1, 1000))
+    # _output1 = np.array(_output1)
+    # _output1 /= _output1.max()
+    # _output2 = np.array(_output2)
+    # _output2 /= _output2.max()
     
     # from matplotlib import pyplot as plt
     # plt.hist(_output1.ravel(), 1000, [_output1.min(), _output1.max()])
     # plt.hist(_output2.ravel(), 1000, [_output2.min(), _output2.max()])    
     # plt.show()
         
-    tmp = cv2.compareHist(_output1, _output2, HISTCMP_BHATTACHARYYA)
+    # tmp = cv2.compareHist(_output1, _output2, HISTCMP_BHATTACHARYYA)
     # tmp = cv2.compareHist(_output1, _output2, cv2.HISTCMP_CHISQR)    
-    # print tmp
 
-    concatenated = torch.cat((img1, img2),0)    
-    euclidean_distance = F.pairwise_distance(output1, output2)
+    concatenated = torch.cat((img2, img3),0)
+    print F.pairwise_distance(output1, output2)
+    euclidean_distance = F.pairwise_distance(output2, output3)
     print euclidean_distance
     imshow(torchvision.utils.make_grid(concatenated),'Dissimilarity: {:.2f}'.format(euclidean_distance.cpu().data.numpy()[0][0]))

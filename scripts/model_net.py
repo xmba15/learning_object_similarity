@@ -8,7 +8,7 @@ import torchvision
 
 class ResnetBased(nn.Module):
     
-    def __init__(self, feature_size = 128, im_size = 224, normalize = False):
+    def __init__(self, feature_size = 256, im_size = 224, normalize = False):
 
         super(ResnetBased, self).__init__()
         self.normalize = normalize

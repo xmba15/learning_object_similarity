@@ -27,8 +27,7 @@ if __name__=="__main__":
 
     Net = model_net.ResnetBased
     model = Net(normalize = True)
-    tnet = TripletNetWork(model)
-    tnet = torch.nn.DataParallel(tnet).cuda()
+    tnet = TripletNetWork(embedding_net = model, ngpu = 3).cuda()
     model.cuda()
     
     criterion = TripletLoss()

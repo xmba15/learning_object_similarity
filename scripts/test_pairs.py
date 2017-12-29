@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 from config import Config
 from training_pairs_generator import NetworkDataset
 from triplet_network import TripletNetWork
@@ -33,7 +35,7 @@ _preprocess = transforms.Compose([
     SquareZeroPadding(),
     transforms.Resize((224, 224), 2),
     transforms.ToTensor(),
-    # normalize
+    normalize
 ])
 
 def load_image(img_path):
@@ -49,11 +51,11 @@ if __name__=="__main__":
     model = Net(normalize = True)
     tnet = TripletNetWork(model).cuda()
     tnet.eval()
-    tnet.load_state_dict(torch.load(Config.model_dir + "/resnet_triplet_triplet_69.pth"))
+    tnet.load_state_dict(torch.load(Config.model_dir + "/resnet_fc256__triplet_0.pth"))
     
-    img1_path = Config.image_dir + "/apple.jpg"
-    img2_path = Config.image_dir + "/fast_mask_roi_8.jpg"
-    img3_path = Config.image_dir + "/tea.jpg"    
+    img1_path = Config.image_dir + "/roi_0.jpg"
+    img2_path = Config.image_dir + "/roi_7.jpg"
+    img3_path = Config.image_dir + "/fast_mask_roi_10.jpg"    
     
     img1 = load_image(img1_path)
     img2 = load_image(img2_path)
@@ -82,4 +84,4 @@ if __name__=="__main__":
     print F.pairwise_distance(output1, output2)
     euclidean_distance = F.pairwise_distance(output2, output3)
     print euclidean_distance
-    imshow(torchvision.utils.make_grid(concatenated),'Dissimilarity: {:.2f}'.format(euclidean_distance.cpu().data.numpy()[0][0]))
+    # imshow(torchvision.utils.make_grid(concatenated),'Dissimilarity: {:.2f}'.format(euclidean_distance.cpu().data.numpy()[0][0]))

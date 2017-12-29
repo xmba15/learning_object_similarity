@@ -45,7 +45,6 @@ def load_image(img_path):
 
 if __name__=="__main__":
 
-    
     Net = model_net.ResnetBased
     model = Net(normalize = True)
     tnet = TripletNetWork(model).cuda()

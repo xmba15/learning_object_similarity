@@ -4,24 +4,26 @@
 import os, sys, glob
 import random
 import numpy as np
+from tqdm import tqdm
 import torch
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader,Dataset
 from PIL import Image
-
 from config import Config
 
 class NetworkDataset(Dataset):
 
-    def __init__(self, data_path, preprocess = Config.transforms):
+    def __init__(self, data_path, preprocess = Config.transforms, n_triplets = 5000000):
 
         self.data_path = data_path
         self.preprocess = preprocess
         self.num_categories = None
         self.image_lists = []
         self.num_img = 0
+        self.n_triplets = n_triplets
         self.get_all_images()
+        self.triplets = self.generate_triplets()
         
     def get_all_images(self):
 
@@ -48,20 +50,27 @@ class NetworkDataset(Dataset):
 
         return img_path1, img_path2
         
+    def generate_triplets(self):
+
+        triplets = []
+
+        for _ in tqdm(range(self.n_triplets)):
+                      
+            first_categor_num = np.random.choice(np.arange(self.num_categories))
+            a_path, p_path = self.get_random_two_images(self.image_lists[first_categor_num], self.image_lists[first_categor_num])
+            negative_categor_list = np.delete(np.arange(self.num_categories), first_categor_num)   
+            second_categor_num = np.random.choice(negative_categor_list)      
+            n_path = np.random.choice(self.image_lists[second_categor_num])
+            triplets.append([a_path, p_path, n_path])
+
+        return torch.LongTensor(np.array(triplets))
+            
     def __getitem__(self, index):
 
-        same_class = random.randint(0, 1)
-        first_categor_num = np.random.choice(np.arange(self.num_categories))
-
-        a_path, p_path = self.get_random_two_images(self.image_lists[first_categor_num], self.image_lists[first_categor_num])
-
-        negative_categor_list = np.delete(np.arange(self.num_categories), first_categor_num)
-        second_categor_num = np.random.choice(negative_categor_list)
-        n_path = np.random.choice(self.image_lists[second_categor_num])
-
-        a = Image.open(a_path)
-        p = Image.open(p_path)
-        n = Image.open(n_path)
+        t = self.triplets[index]
+        a = Image.open(t[0])
+        p = Image.open(t[1])
+        n = Image.open(t[2])
 
         if self.preprocess is not None:
 
@@ -79,9 +88,8 @@ if __name__=="__main__":
 
     data_set = NetworkDataset(Config.training_dir)
     print data_set.num_categories
-    print data_set.image_lists[0][0]
+    print len(data_set.image_lists[0])
     import cv2
     img = cv2.imread(data_set.image_lists[0][0])
     print img.shape
-    data_set.__getitem__(1)
     print data_set.num_img

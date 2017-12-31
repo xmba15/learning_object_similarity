@@ -14,8 +14,8 @@ class ResnetBased(nn.Module):
         self.normalize = normalize
         self.im_size = 224
         self.feature_size = feature_size
-        self.resnet = torchvision.models.resnet50(pretrained=True)
-        fc = nn.Linear(2048, feature_size)
+        self.resnet = torchvision.models.resnet18(pretrained=True)
+        fc = nn.Linear(self.resnet.fc.in_features, feature_size)
         self.resnet.fc = fc
         nn.init.xavier_normal(self.resnet.fc.weight)
 

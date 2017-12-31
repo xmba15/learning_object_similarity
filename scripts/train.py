@@ -3,7 +3,7 @@
 
 import os
 from training_pairs_generator import NetworkDataset
-from triplet_network import TripletNetWork,TripletLoss
+from triplet_network import TripletNetWork,TripletLoss, global_orthogonal_regularization, CorrelationPenaltyLoss
 import torch
 from torch.autograd import Variable
 from torch.utils.data import DataLoader,Dataset
@@ -45,8 +45,11 @@ if __name__=="__main__":
 
             e_a, e_p, e_n = tnet(a, p, n)
 
-            optimizer.zero_grad()
+
             _loss = criterion(e_a, e_p, e_n)
+            _loss += CorrelationPenaltyLoss()(e_a)
+            _loss += Config.gor_alpha * global_orthogonal_regularization(e_a, e_n)
+            optimizer.zero_grad()            
             _loss.backward()
             optimizer.step()
 
@@ -58,8 +61,3 @@ if __name__=="__main__":
                 loss_history.append(_loss.data[0])
         
         torch.save(tnet.state_dict(), Config.model_dir + cnn_model + "_triplet_" + str(epoch) + ".pth")
-
-    # plt.plot(counter, loss_history)
-    # plt.title("Loss Value Over Time for Training Siamese Dense Net for Object Similarity")
-    # plt.savefig(Config.log_dir + "/loss_data.png")
-    # plt.close()

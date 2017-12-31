@@ -49,3 +49,4 @@ class Config():
     train_batch_size = 64
     train_number_epochs = 100
     transforms = _preprocess
+    gor_alpha = 1.0

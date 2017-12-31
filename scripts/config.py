@@ -47,5 +47,13 @@ class Config():
     image_dir = image_path
     log_dir = log_path
     train_batch_size = 64
-    train_number_epochs = 100
+    n_triplets = 1280000
+    train_number_epochs = 50
     transforms = _preprocess
+    gor_alpha = 1.0
+    lr = 0.1
+    lr_decay = 1e-6
+    weight_decay = 1e-4
+    optimizer = "adam"
+    margin = 1.0
+    cnn_model = "/resnet18_fc256"

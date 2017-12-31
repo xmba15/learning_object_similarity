@@ -14,10 +14,11 @@ from config import Config
 
 class NetworkDataset(Dataset):
 
-    def __init__(self, data_path, preprocess = Config.transforms, n_triplets = 5000000):
+    def __init__(self, data_path, preprocess = Config.transforms, batch_size = Config.train_batch_size, n_triplets = Config.n_triplets):
 
         self.data_path = data_path
         self.preprocess = preprocess
+        self.batch_size = batch_size
         self.num_categories = None
         self.image_lists = []
         self.num_img = 0
@@ -54,9 +55,18 @@ class NetworkDataset(Dataset):
 
         triplets = []
 
+        already_idxs = set()
+
         for _ in tqdm(range(self.n_triplets)):
-                      
+            
+            if len(already_idxs) >= self.batch_size:
+                already_idxs = set()
             first_categor_num = np.random.choice(np.arange(self.num_categories))
+            
+            while first_categor_num in already_idxs:
+                first_categor_num = np.random.choice(np.arange(self.num_categories))
+            already_idxs.add(first_categor_num)
+            
             a_path, p_path = self.get_random_two_images(self.image_lists[first_categor_num], self.image_lists[first_categor_num])
             negative_categor_list = np.delete(np.arange(self.num_categories), first_categor_num)   
             second_categor_num = np.random.choice(negative_categor_list)      

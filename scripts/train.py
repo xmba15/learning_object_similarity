@@ -18,10 +18,9 @@ import matplotlib.pyplot as plt
 
 if __name__=="__main__":
 
-    cnn_model = "resnet_fc256_"
     _dataset = NetworkDataset(data_path = Config.training_dir)
     train_dataloader = DataLoader(_dataset,
-                        shuffle = True,
+                        shuffle = False,
                         num_workers = 8,
                         batch_size = Config.train_batch_size)
 
@@ -45,7 +44,6 @@ if __name__=="__main__":
 
             e_a, e_p, e_n = tnet(a, p, n)
 
-
             _loss = criterion(e_a, e_p, e_n)
             _loss += CorrelationPenaltyLoss()(e_a)
             _loss += Config.gor_alpha * global_orthogonal_regularization(e_a, e_n)
@@ -60,4 +58,4 @@ if __name__=="__main__":
                 counter.append(iteration_number)
                 loss_history.append(_loss.data[0])
         
-        torch.save(tnet.state_dict(), Config.model_dir + cnn_model + "_triplet_" + str(epoch) + ".pth")
+        torch.save(tnet.state_dict(), Config.model_dir + Config.cnn_model + "_triplet_" + str(epoch) + ".pth")

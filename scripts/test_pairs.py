@@ -51,7 +51,7 @@ if __name__=="__main__":
     model = Net(normalize = True)
     tnet = TripletNetWork(model).cuda()
     tnet.eval()
-    tnet.load_state_dict(torch.load(Config.model_dir + "/resnet_fc256__triplet_0.pth"))
+    tnet.load_state_dict(torch.load(Config.model_dir + "/resnet18_fc256_triplet_1.pth"))
     
     img1_path = Config.image_dir + "/roi_0.jpg"
     img2_path = Config.image_dir + "/roi_7.jpg"

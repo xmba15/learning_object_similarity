@@ -25,14 +25,14 @@ RandomColorJitter = transforms.Lambda(
 
 RandomZoom = transforms.Lambda(
 
-    lambda x: transforms.Resize((224, 224), 2)(transforms.CenterCrop((220, 220))(x)) if random.random() < 0.5 else x)
+    lambda x: transforms.Resize((224, 224), 2)(transforms.CenterCrop((210, 210))(x)) if random.random() < 0.5 else x)
 
 _preprocess = transforms.Compose([
     SquareZeroPadding(),
     transforms.Resize((224, 224), 2),
     RandomZoom,
-    transforms.RandomHorizontalFlip(),
-    transforms.RandomVerticalFlip(),
+    # transforms.RandomHorizontalFlip(),
+    # transforms.RandomVerticalFlip(),
     transforms.RandomRotation(degrees = 10),
     RandomColorJitter,    
     transforms.ToTensor(),
@@ -52,4 +52,4 @@ class Config():
     gor_alpha = 1.0
     n_triplets = 1280000
     margin = 1.0
-    cnn_model = "/resnet18_fc256"
+    cnn_model = "/resnet50_fc1000"

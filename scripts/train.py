@@ -3,7 +3,7 @@
 
 import os
 from training_pairs_generator import NetworkDataset
-from triplet_network import TripletNetWork,TripletLoss, global_orthogonal_regularization, CorrelationPenaltyLoss
+from triplet_network import TripletNetWork, loss_random_sampling, global_orthogonal_regularization
 import torch
 from torch.autograd import Variable
 from torch.utils.data import DataLoader,Dataset
@@ -29,8 +29,7 @@ if __name__=="__main__":
     tnet = TripletNetWork(embedding_net = model, ngpu = 3).cuda()
     model.cuda()
     
-    criterion = TripletLoss()
-    optimizer = optim.Adam(tnet.parameters(),lr = 0.0005 )
+    optimizer = optim.Adam(tnet.parameters(),lr = 0.001 )
 
     counter = []
     loss_history = [] 
@@ -39,13 +38,14 @@ if __name__=="__main__":
     for epoch in range(0, Config.train_number_epochs):
         for i, data in enumerate(train_dataloader, 0):
 
-            a, p , n = data
-            a, p , n = Variable(a).cuda(), Variable(p).cuda() , Variable(n).cuda()
+            a, p, n = data
+            a, p, n = Variable(a).cuda(), Variable(p).cuda() , Variable(n).cuda()
 
-            e_a, e_p, e_n = tnet(a, p, n)
+            e_a = tnet(a)
+            e_p = tnet(p)
+            e_n = tnet(n)
 
-            _loss = criterion(e_a, e_p, e_n)
-            _loss += CorrelationPenaltyLoss()(e_a)
+            _loss = loss_random_sampling(e_a, e_p, e_n,margin = Config.margin, anchor_swap = True, loss_type = "softmax")
             _loss += Config.gor_alpha * global_orthogonal_regularization(e_a, e_n)
             optimizer.zero_grad()            
             _loss.backward()

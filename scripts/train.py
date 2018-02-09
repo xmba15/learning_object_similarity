@@ -3,7 +3,7 @@
 
 import os
 from training_pairs_generator import NetworkDataset
-from triplet_network import TripletNetWork, DBLLoss
+from triplet_network import TripletNetWork,TripletLoss
 import torch
 from torch.autograd import Variable
 from torch.utils.data import DataLoader,Dataset
@@ -18,19 +18,19 @@ import matplotlib.pyplot as plt
 
 if __name__=="__main__":
 
-    cnn_model = "resnet_triplet"
+    cnn_model = "resnet_fc256_"
     _dataset = NetworkDataset(data_path = Config.training_dir)
     train_dataloader = DataLoader(_dataset,
                         shuffle = True,
-                        num_workers=8,
+                        num_workers = 8,
                         batch_size = Config.train_batch_size)
 
     Net = model_net.ResnetBased
     model = Net(normalize = True)
-    tnet = TripletNetWork(model).cuda()
+    tnet = TripletNetWork(embedding_net = model, ngpu = 3).cuda()
     model.cuda()
     
-    criterion = DBLLoss()
+    criterion = TripletLoss()
     optimizer = optim.Adam(tnet.parameters(),lr = 0.0005 )
 
     counter = []

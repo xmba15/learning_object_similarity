@@ -30,8 +30,9 @@ _preprocess = transforms.Compose([
 img = _preprocess(img)
 img = img.unsqueeze(0)
 
-densnet = torchvision.models.densenet201(pretrained = True)
-densnet_cnn = nn.Sequential(densnet).cuda()
+densnet = torchvision.models.vgg19_bn(pretrained = True).cuda().eval()
+densnet_cnn = densnet
+# densnet_cnn = nn.Sequential(densnet).cuda()
 img = Variable(img).cuda()
 
 from time import time

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-from training_pairs_generator import SiameseNetworkDataset
-from siamese_network import SiameseNetwork, ContrastiveLoss
+from training_pairs_generator import NetworkDataset
+from triplet_network import TripletNetwork,TripletLoss
 import torch
 from torch.autograd import Variable
 from torch.utils.data import DataLoader,Dataset
@@ -12,48 +12,39 @@ from torch import optim
 from config import Config
 from utils import imshow, show_plot
 
-import matplotlib.pyplot as plt
-
 if __name__=="__main__":
 
-    cnn_model = "densenet"
-    siamese_dataset = SiameseNetworkDataset(data_path = Config.training_dir)
-    train_dataloader = DataLoader(siamese_dataset,
+    dataset = NetworkDataset()
+    train_dataloader = DataLoader(dataset,
                         shuffle = True,
-                        num_workers=8,
+                        num_workers = 8,
                         batch_size = Config.train_batch_size)
-    
-    net = SiameseNetwork(pretrained = True).cuda()
-    criterion = ContrastiveLoss()
-    optimizer = optim.Adam(net.parameters(),lr = 0.0005 )
+
+    tnet = TripletNetWork(ngpu = 3).cuda()
+
+    criterion = TripletLoss()
+    optimizer = optim.Adam(tnet.parameters(),lr = 0.0005)
 
     counter = []
-    loss_history = [] 
+    loss_history = []
     iteration_number= 0
 
     for epoch in range(0, Config.train_number_epochs):
         for i, data in enumerate(train_dataloader, 0):
 
-            img0, img1 , label = data
-            img0, img1 , label = Variable(img0).cuda(), Variable(img1).cuda() , Variable(label).cuda()
+            view1, view2, view3, p, n = data
+            view1, view2, view3, p, n = Variable(view1).cuda(), Variable(view2).cuda() , Variable(view3).cuda(), Variable(p).cuda(), Variable(n).cuda()
 
-            output1, output2 = net(img0, img1)
+            e_a, e_p, e_n = tnet(view1, view2, view3, p, n)
 
             optimizer.zero_grad()
-            loss_contrastive = criterion(output1,output2,label)
-            loss_contrastive.backward()
+            _loss = criterion(e_a, e_p, e_n)
+            _loss.backward()
             optimizer.step()
 
             if i % 10 == 0 :
 
-                print("Epoch number {}\n Current loss {}\n".format(epoch,loss_contrastive.data[0]))
+                print("Epoch number {}\n Current loss {}\n".format(epoch, _loss.data[0]))
                 iteration_number +=10
-                counter.append(iteration_number)
-                loss_history.append(loss_contrastive.data[0])
-        
-        torch.save(net.state_dict(), Config.model_dir + cnn_model + "_siamese_" + str(epoch) + ".pth")
 
-    plt.plot(counter, loss_history)
-    plt.title("Loss Value Over Time for Training Siamese Dense Net for Object Similarity")
-    plt.savefig(Config.log_dir + "/loss_data.png")
-    plt.close()
+        torch.save(tnet.state_dict(), Config.model_dir + Config.feature_extract_model + "_triplet_" + str(epoch) + ".pth")

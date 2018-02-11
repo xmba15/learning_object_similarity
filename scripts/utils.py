@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import torch, torchvision
 import numpy as np
 
-from training_pairs_generator import SiameseNetworkDataset
+from training_pairs_generator import NetworkDataset
 
 def imshow(img, text, should_save=False):
 
@@ -30,8 +30,8 @@ if __name__=="__main__":
     _data_path = directory_root + "/data/raw_training_data/"
     test_data_path = directory_root + "/data/raw_testing_data/"
     
-    # siamese_dataset = SiameseNetworkDataset(data_path = _data_path)
-    siamese_dataset = SiameseNetworkDataset(data_path = test_data_path)
+    # siamese_dataset = NetworkDataset(data_path = _data_path)
+    siamese_dataset = NetworkDataset(data_path = test_data_path)
     
     vis_dataloader = DataLoader(siamese_dataset,
                         shuffle = True,
@@ -43,4 +43,3 @@ if __name__=="__main__":
 
     print example_batch[2]    
     imshow(torchvision.utils.make_grid(concatenated), None)
-

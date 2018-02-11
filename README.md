@@ -1,1 +1,1 @@
-Siamese Network to Learn Object Similarity
+Learning Object Similarity with Triplet Network

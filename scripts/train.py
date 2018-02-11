@@ -3,47 +3,39 @@
 
 import os
 from training_pairs_generator import NetworkDataset
-from triplet_network import TripletNetWork,TripletLoss
+from triplet_network import TripletNetwork,TripletLoss
 import torch
 from torch.autograd import Variable
 from torch.utils.data import DataLoader,Dataset
 from torch import optim
 
-import model_net
-
 from config import Config
 from utils import imshow, show_plot
 
-import matplotlib.pyplot as plt
-
 if __name__=="__main__":
 
-    cnn_model = "resnet_fc256_"
-    _dataset = NetworkDataset(data_path = Config.training_dir)
-    train_dataloader = DataLoader(_dataset,
+    dataset = NetworkDataset()
+    train_dataloader = DataLoader(dataset,
                         shuffle = True,
                         num_workers = 8,
                         batch_size = Config.train_batch_size)
 
-    Net = model_net.ResnetBased
-    model = Net(normalize = True)
-    tnet = TripletNetWork(embedding_net = model, ngpu = 3).cuda()
-    model.cuda()
-    
+    tnet = TripletNetWork(ngpu = 3).cuda()
+
     criterion = TripletLoss()
-    optimizer = optim.Adam(tnet.parameters(),lr = 0.0005 )
+    optimizer = optim.Adam(tnet.parameters(),lr = 0.0005)
 
     counter = []
-    loss_history = [] 
+    loss_history = []
     iteration_number= 0
 
     for epoch in range(0, Config.train_number_epochs):
         for i, data in enumerate(train_dataloader, 0):
 
-            a, p , n = data
-            a, p , n = Variable(a).cuda(), Variable(p).cuda() , Variable(n).cuda()
+            view1, view2, view3, p, n = data
+            view1, view2, view3, p, n = Variable(view1).cuda(), Variable(view2).cuda() , Variable(view3).cuda(), Variable(p).cuda(), Variable(n).cuda()
 
-            e_a, e_p, e_n = tnet(a, p, n)
+            e_a, e_p, e_n = tnet(view1, view2, view3, p, n)
 
             optimizer.zero_grad()
             _loss = criterion(e_a, e_p, e_n)
@@ -54,12 +46,5 @@ if __name__=="__main__":
 
                 print("Epoch number {}\n Current loss {}\n".format(epoch, _loss.data[0]))
                 iteration_number +=10
-                counter.append(iteration_number)
-                loss_history.append(_loss.data[0])
-        
-        torch.save(tnet.state_dict(), Config.model_dir + cnn_model + "_triplet_" + str(epoch) + ".pth")
 
-    # plt.plot(counter, loss_history)
-    # plt.title("Loss Value Over Time for Training Siamese Dense Net for Object Similarity")
-    # plt.savefig(Config.log_dir + "/loss_data.png")
-    # plt.close()
+        torch.save(tnet.state_dict(), Config.model_dir + Config.feature_extract_model + "_triplet_" + str(epoch) + ".pth")

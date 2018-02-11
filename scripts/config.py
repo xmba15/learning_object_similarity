@@ -34,7 +34,7 @@ _preprocess = transforms.Compose([
     transforms.RandomHorizontalFlip(),
     transforms.RandomVerticalFlip(),
     transforms.RandomRotation(degrees = 10),
-    RandomColorJitter,    
+    RandomColorJitter,
     transforms.ToTensor(),
     Normalize
 ])
@@ -49,3 +49,5 @@ class Config():
     train_batch_size = 64
     train_number_epochs = 100
     transforms = _preprocess
+    feature_extract_model = "resnet50"
+    n_triplets = 1280000

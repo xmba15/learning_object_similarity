@@ -32,6 +32,7 @@ _preprocess = transforms.Compose([
     transforms.Resize((224, 224), 2),
     RandomZoom,
     transforms.RandomHorizontalFlip(),
+    transforms.RandomVerticalFlip(),
     transforms.RandomRotation(degrees = 10),
     RandomColorJitter,
     transforms.ToTensor(),

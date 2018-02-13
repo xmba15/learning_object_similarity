@@ -55,11 +55,13 @@ class TripletNetwork(nn.Module):
         else:
             p = self.resnet(p)
             p = self.maxpool1(p)
+            p = p.view(p.size(0), -1)
             p = self.fc1(p)
             p = F.normalize(p, p = 2, dim = 1)
 
             n = self.resnet(n)
             n = self.maxpool1(n)
+            n = n.view(n.size(0), -1)
             n = self.fc1(n)
             n = F.normalize(n, p = 2, dim = 1)
 

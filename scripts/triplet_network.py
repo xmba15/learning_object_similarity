@@ -10,11 +10,10 @@ resnet = torchvision.models.resnet50(pretrained=True)
 
 class TripletNetwork(nn.Module):
 
-    def __init__(self, feature_size = 512, multiple_view = True, ngpu = 1):
+    def __init__(self, feature_size = 512, multiple_view = True):
 
         super(TripletNetwork, self).__init__()
         self.multiple_view = multiple_view
-        self.ngpu = ngpu
         self.feature_size = feature_size
         self.resnet = nn.Sequential(*list(resnet.children())[:-2])
         self.maxpool1 = nn.MaxPool2d(kernel_size = 7, stride = 1, padding = 0)
@@ -51,13 +50,6 @@ class TripletNetwork(nn.Module):
             view = self.fc2(view)
             view = F.normalize(view, p = 2, dim = 1)
 
-
-
-            if self.ngpu > 1:
-                view = nn.DataParallel(view)
-                p = nn.DataParallel(p)
-                n = nn.DataParallel(n)
-
             return view, p, n
 
         else:
@@ -70,10 +62,6 @@ class TripletNetwork(nn.Module):
             n = self.maxpool1(n)
             n = self.fc1(n)
             n = F.normalize(n, p = 2, dim = 1)
-
-            if self.ngpu > 1:
-                p = nn.DataParallel(p)
-                n = nn.DataParallel(n)
 
             return p, n
 

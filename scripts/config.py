@@ -25,14 +25,13 @@ RandomColorJitter = transforms.Lambda(
 
 RandomZoom = transforms.Lambda(
 
-    lambda x: transforms.Resize((224, 224), 2)(transforms.CenterCrop((220, 220))(x)) if random.random() < 0.5 else x)
+    lambda x: transforms.Resize((224, 224), 2)(transforms.CenterCrop((200, 200))(x)) if random.random() < 0.5 else x)
 
 _preprocess = transforms.Compose([
     SquareZeroPadding(),
     transforms.Resize((224, 224), 2),
     RandomZoom,
     transforms.RandomHorizontalFlip(),
-    transforms.RandomVerticalFlip(),
     transforms.RandomRotation(degrees = 10),
     RandomColorJitter,
     transforms.ToTensor(),
@@ -46,7 +45,7 @@ class Config():
     model_dir = model_path
     image_dir = image_path
     log_dir = log_path
-    train_batch_size = 64
+    train_batch_size = 32
     train_number_epochs = 100
     transforms = _preprocess
     feature_extract_model = "resnet50"

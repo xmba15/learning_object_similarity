@@ -20,8 +20,8 @@ if __name__=="__main__":
                         num_workers = 8,
                         batch_size = Config.train_batch_size)
 
-    tnet = TripletNetwork(ngpu = 3).cuda()
-
+    tnet = TripletNetwork().cuda()    
+    tnet = torch.nn.DataParallel(tnet, [0, 1, 2])
     criterion = TripletLoss()
     optimizer = optim.Adam(tnet.parameters(),lr = 0.0005)
 

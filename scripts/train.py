@@ -3,7 +3,7 @@
 
 import os
 from training_pairs_generator import NetworkDataset
-from triplet_network import TripletNetwork,TripletLoss
+from triplet_network import TripletNetwork,TripletLoss, global_orthogonal_regularization
 import torch
 from torch.autograd import Variable
 from torch.utils.data import DataLoader,Dataset
@@ -21,7 +21,7 @@ if __name__=="__main__":
                         batch_size = Config.train_batch_size)
 
     tnet = TripletNetwork().cuda()    
-    tnet = torch.nn.DataParallel(tnet, [0, 1, 2])
+    tnet = torch.nn.DataParallel(tnet, [0, 1])
     criterion = TripletLoss()
     optimizer = optim.Adam(tnet.parameters(),lr = 0.0005)
 
@@ -39,6 +39,7 @@ if __name__=="__main__":
 
             optimizer.zero_grad()
             _loss = criterion(e_a, e_p, e_n)
+            _loss += Config.gor_alpha * global_orthogonal_regularization(e_a, e_n)
             _loss.backward()
             optimizer.step()
 

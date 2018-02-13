@@ -50,3 +50,5 @@ class Config():
     transforms = _preprocess
     feature_extract_model = "resnet50"
     n_triplets = 1280000
+    gor_alpha = 1.0
+        

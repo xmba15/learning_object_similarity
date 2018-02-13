@@ -75,3 +75,11 @@ class TripletLoss(torch.nn.Module):
     def forward(self, embedded_a, embedded_p, embedded_n):
 
         return F.triplet_margin_loss(embedded_a, embedded_p, embedded_n, margin = self.margin, p = 2, eps = 1e-6, swap = False)
+
+def global_orthogonal_regularization(anchor, negative):
+
+    neg_dis = torch.sum(torch.mul(anchor,negative),1)
+    dim = anchor.size(1)
+    gor = torch.pow(torch.mean(neg_dis),2) + torch.clamp(torch.mean(torch.pow(neg_dis,2))-1.0/dim, min=0.0)
+    
+    return gor

@@ -47,9 +47,8 @@ class Config():
     image_dir = image_path
     log_dir = log_path
     train_batch_size = 32
-    train_number_epochs = 100
+    train_number_epochs = 10
     transforms = _preprocess
     feature_extract_model = "resnet50"
     n_triplets = 1280000
-    gor_alpha = 1.0
         

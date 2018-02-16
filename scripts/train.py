@@ -3,7 +3,7 @@
 
 import os
 from training_pairs_generator import NetworkDataset
-from triplet_network import TripletNetwork,TripletLoss, global_orthogonal_regularization
+from triplet_network import TripletNetwork, TripletLoss
 import torch
 from torch.autograd import Variable
 from torch.utils.data import DataLoader,Dataset
@@ -39,7 +39,6 @@ if __name__=="__main__":
 
             optimizer.zero_grad()
             _loss = criterion(e_a, e_p, e_n)
-            _loss += Config.gor_alpha * global_orthogonal_regularization(e_a, e_n)
             _loss.backward()
             optimizer.step()
 

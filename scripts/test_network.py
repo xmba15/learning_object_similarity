@@ -45,8 +45,9 @@ def load_image(img_path):
 if __name__=="__main__":
 
     tnet = TripletNetwork().cuda()
+    tnet = torch.nn.DataParallel(tnet)
     tnet.eval()
-    tnet.load_state_dict(torch.load(Config.model_dir + "/resnet50_triplet_0.pth"))
+    tnet.load_state_dict(torch.load(Config.model_dir + "/resnet50_triplet_9.pth"))
     
     img1_path = Config.image_dir + "/noodle.jpg"
     img2_path = Config.image_dir + "/noodle3.jpg"

@@ -52,9 +52,9 @@ if __name__=="__main__":
     img1_path = Config.image_dir + "/noodle.jpg"
     img2_path = Config.image_dir + "/noodle3.jpg"
     img3_path = Config.image_dir + "/noodle4.jpg"    
-    p_path = Config.image_dir + "/cold_brew.jpg"
-    n_path = Config.image_dir + "/noodle2.jpg"
-    
+    p_path = Config.image_dir + "/noodle2.jpg"
+    n_path = Config.image_dir + "/fast_mask_roi_8.jpg"
+
     img1 = load_image(img1_path)
     img2 = load_image(img2_path)
     img3 = load_image(img3_path)

@@ -1,4 +1,4 @@
-## Learning Object Similarity with Triplet Network
+## Learning Object Similarity with multi-view Triplet Network
 ## Test code
  - Download trained models from the url in models directory
  - `python scripts/test_network.py`

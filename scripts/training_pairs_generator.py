@@ -47,7 +47,7 @@ class NetworkDataset(Dataset):
 
         max_step = 20
         num_view = 3
-        step = np.random.randint(20)
+        step = np.random.randint(max_step)
 
         view1_index = np.random.randint(len(l_img) - max_step * (num_view - 1))
 

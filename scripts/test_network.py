@@ -21,7 +21,7 @@ from new_augmentation import SquareZeroPadding
 from config import Config
 from utils import imshow, show_plot
 
-from utils import imshow
+import utils
 import argparse
 
 import torchvision.transforms as transforms
@@ -100,4 +100,4 @@ if __name__=="__main__":
         _p = load_image_2(p_path)
         _n = load_image_2(n_path)
         concatenated = torch.cat((_img1, _img2, _img3, _p, _n), 0)    
-        imshow(torchvision.utils.make_grid(concatenated), 'Dissimilarity: positive distance {:.2f}; negative distance {:.2f}'.format(p_distance.cpu().data.numpy()[0][0], n_distance.cpu().data.numpy()[0][0]))
+        utils.imshow(torchvision.utils.make_grid(concatenated), 'Dissimilarity: positive distance {:.2f}; negative distance {:.2f}'.format(p_distance.cpu().data.numpy()[0][0], n_distance.cpu().data.numpy()[0][0]))
